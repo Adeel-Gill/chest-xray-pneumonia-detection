@@ -35,6 +35,35 @@ chest-xray-pneumonia-detection/
 │
 └── README.md
 
-Notes:
-- Notebooks contain minimal placeholder content.
-- Model and document files are placeholders (replace with real files).
+
+## Project Overview
+This project focuses on detecting pneumonia from chest X-ray images using deep learning techniques. Convolutional Neural Networks (CNNs) are trained to classify X-ray images as Pneumonia or Normal.
+
+## Objectives
+- Build a CNN-based pneumonia detection model
+- Evaluate model performance using accuracy, precision, recall, and confusion matrix
+- Apply explainable AI techniques (Grad-CAM) to visualize model decisions
+
+## Dataset
+Chest X-ray images containing Normal and Pneumonia cases.
+
+## Tools & Technologies
+- Python
+- TensorFlow / Keras
+- OpenCV
+- NumPy, Pandas
+- Matplotlib, Seaborn
+
+## Project Structure
+- `data/` → Dataset
+- `notebooks/` → Experiments & training
+- `models/` → Saved models
+- `explainability/` → Grad-CAM visualizations
+- `app/` → Deployment app
+- `results/` → Metrics and plots
+- `report/` → Final report
+- `presentation/` → Slides
+
+## Author
+MS AI Student Adeel Gill
+
