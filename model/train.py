@@ -2,10 +2,13 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import numpy as np
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from model import get_model
 from pathlib import Path
+from sklearn.metrics import f1_score, precision_score, recall_score
+
 print(torch.cuda.is_available())  # Should be True
 print(torch.cuda.get_device_name(0))  # Should show your NVIDIA GPU
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -58,17 +61,31 @@ for epoch in range(num_epochs):
         running_loss += loss.item()
 
     # Validation
-    model.eval()
-    correct, total = 0, 0
-    with torch.no_grad():
-        for images, labels in val_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-    val_acc = correct / total
-    print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {running_loss/len(train_loader):.4f} - Val Acc: {val_acc:.4f}")
+    # ✅ New validation with F1, Precision, Recall
+model.eval()
+all_labels = []
+all_preds = []
+
+with torch.no_grad():
+    for images, labels in val_loader:
+        images, labels = images.to(device), labels.to(device)
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        
+        all_labels.extend(labels.cpu().numpy())
+        all_preds.extend(predicted.cpu().numpy())
+
+val_acc = (np.array(all_preds) == np.array(all_labels)).mean()
+val_f1 = f1_score(all_labels, all_preds)
+val_precision = precision_score(all_labels, all_preds)
+val_recall = recall_score(all_labels, all_preds)
+
+print(f"Epoch [{epoch+1}/{num_epochs}] - "
+      f"Loss: {running_loss/len(train_loader):.4f} - "
+      f"Val Acc: {val_acc:.4f} - "
+      f"F1: {val_f1:.4f} - "
+      f"Precision: {val_precision:.4f} - "
+      f"Recall: {val_recall:.4f}")
 
 # Save trained model
 torch.save(model.state_dict(), BASE_DIR / "pneumonia.pt")
