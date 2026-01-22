@@ -7,11 +7,10 @@ from pathlib import Path
 from torchvision import transforms
 
 app = FastAPI()
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load model
-model = get_model()
+model = get_model().to(device)
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR / "pneumonia.pt"
 model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
